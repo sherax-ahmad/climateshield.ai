@@ -1,0 +1,106 @@
+version: "3.9"
+
+# ClimateShield AI — Docker Compose
+# Usage: docker-compose up
+# Docs:  docs/deployment/DEPLOYMENT.md
+
+services:
+
+  # ── API Server ──────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: climateshield-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://climateshield:${DB_PASSWORD}@db:5432/climateshield
+      - REDIS_URL=redis://redis:6379/0
+      - OPENAQ_API_KEY=${OPENAQ_API_KEY}
+      - FIRMS_API_KEY=${FIRMS_API_KEY}
+      - EARTHDATA_USERNAME=${EARTHDATA_USERNAME}
+      - EARTHDATA_PASSWORD=${EARTHDATA_PASSWORD}
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── React Dashboard ─────────────────────────────────────────────────────────
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: climateshield-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://api:8000
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ── PostgreSQL Database ─────────────────────────────────────────────────────
+  db:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: climateshield-db
+    environment:
+      - POSTGRES_DB=climateshield
+      - POSTGRES_USER=climateshield
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./api/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U climateshield"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── Redis (caching + pub/sub for WebSocket alerts) ──────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: climateshield-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # ── Data Refresh Scheduler ──────────────────────────────────────────────────
+  # Pulls new ERA5, OpenAQ, FIRMS data every 6 hours
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: climateshield-scheduler
+    command: python -m api.scheduler
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://climateshield:${DB_PASSWORD}@db:5432/climateshield
+      - REDIS_URL=redis://redis:6379/0
+      - OPENAQ_API_KEY=${OPENAQ_API_KEY}
+      - FIRMS_API_KEY=${FIRMS_API_KEY}
+      - EARTHDATA_USERNAME=${EARTHDATA_USERNAME}
+      - EARTHDATA_PASSWORD=${EARTHDATA_PASSWORD}
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

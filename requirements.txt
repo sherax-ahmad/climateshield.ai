@@ -1,0 +1,74 @@
+# ClimateShield AI — Python Dependencies
+# Install: pip install -r requirements.txt
+
+# ── Web Framework ────────────────────────────────────────────────────────────
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+python-multipart==0.0.9
+websockets==12.0
+
+# ── Data Science ─────────────────────────────────────────────────────────────
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.5.0
+xgboost==2.0.3
+joblib==1.4.2
+
+# ── Deep Learning (AQI LSTM model) ───────────────────────────────────────────
+torch==2.3.0
+# tensorflow==2.16.1  # alternative if preferred
+
+# ── Geospatial ────────────────────────────────────────────────────────────────
+geopandas==0.14.4
+shapely==2.0.4
+pyproj==3.6.1
+rasterio==1.3.10
+xarray==2024.5.0
+netCDF4==1.7.1
+h5py==3.11.0
+
+# ── Climate Data APIs ────────────────────────────────────────────────────────
+cdsapi==0.7.2           # ERA5 via Copernicus Climate Data Store
+earthaccess==0.9.0      # NASA EarthData (GPM, MODIS)
+requests==2.32.3
+
+# ── Explainability ────────────────────────────────────────────────────────────
+shap==0.45.1
+
+# ── Validation ───────────────────────────────────────────────────────────────
+pydantic==2.7.1
+pydantic-settings==2.2.1
+
+# ── Database ─────────────────────────────────────────────────────────────────
+sqlalchemy==2.0.30
+alembic==1.13.1
+asyncpg==0.29.0        # PostgreSQL async driver
+aiosqlite==0.20.0      # SQLite (offline / edge deployments)
+
+# ── Caching ──────────────────────────────────────────────────────────────────
+redis==5.0.4
+hiredis==2.3.2
+
+# ── Scheduling ───────────────────────────────────────────────────────────────
+apscheduler==3.10.4    # Data refresh every 6 hours
+
+# ── Visualization / export ───────────────────────────────────────────────────
+matplotlib==3.9.0
+seaborn==0.13.2
+plotly==5.22.0
+
+# ── NLP / AI Assistant ────────────────────────────────────────────────────────
+# On-device LLM via llama.cpp bindings (Urdu + English health Q&A)
+llama-cpp-python==0.2.77
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest==8.2.2
+pytest-asyncio==0.23.7
+httpx==0.27.0          # async test client for FastAPI
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
+python-dotenv==1.0.1
+rich==13.7.1           # beautiful CLI output
+tqdm==4.66.4
+pyarrow==16.1.0        # parquet support
+openpyxl==3.1.3        # Excel (DFO flood data)

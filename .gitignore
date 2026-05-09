@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment
+.env
+.env.local
+*.env
+
+# Data (too large for Git — use download scripts)
+data/raw/
+data/processed/
+*.nc
+*.hdf5
+*.h5
+*.parquet
+
+# Model weights (use model registry or release artifacts)
+models/saved/
+*.joblib
+*.pkl
+*.pt
+*.bin
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+
+# Flutter
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/build/
+
+# Node / Dashboard
+dashboard/node_modules/
+dashboard/build/
+dashboard/.next/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Logs
+*.log
+logs/
