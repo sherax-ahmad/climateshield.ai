@@ -206,4 +206,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). We welcome contributions from developers
 ## 📬 Contact
 
 Built for the **UNICEF Venture Fund Climate & Health 2026** call.  
-Questions: [open an issue](https://github.com/YOUR_ORG/climateshield-ai/issues)
+Questions: [open an issue](https://github.com/sherax-ahmad/climateshield-ai/issues)
